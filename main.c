@@ -20,8 +20,8 @@ struct Tienda *productos = NULL;
 int size = 0;
 int count = 0;  // cuántos productos hay actualmente
 
-int menu_principal(int *opcion){
-
+int menu_principal(){
+    int sel;
     printf("\n%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
                201, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205,205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205,187);
     printf("\n%c\tInventario Tienda\t%c\n",186,186);
@@ -32,9 +32,9 @@ int menu_principal(int *opcion){
             "\n %c [3] - Mostrar Catalogo"
             "\n %c [4] - Salir"
             "\n\n Selecciona: ", 175,175,175,175);
-    scanf("%d", &*opcion);
+    scanf("%d", &sel);
 
-    return (*opcion);
+    return sel;
 }
 
 void ingreso_productos(void) {
@@ -72,7 +72,7 @@ int main(int argc, const char * argv[]) {
     int opcion;
 
     do {
-        opcion = menu_principal(&opcion);
+        opcion = menu_principal();
 
         switch (opcion) {
             case 1:
