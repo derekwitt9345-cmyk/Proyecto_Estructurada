@@ -1,54 +1,108 @@
-#include "stdio.h"
-#include "stdlib.h"
+//
+//  main.c
+//  Administrador_tienda
+//
+//  Created by Derek Witt on 08/05/26.
+//
 
-typedef struct{
-        char nombre[50];
-        float precio;
-        int stock;
-    } producto;
+#include <stdlib.h>
+#include <stdio.h>
 
-void agregar_producto(producto inventario[], int *totalProd); // Funcion para agregar producto
+struct Tienda {
+    char idproducto[13];
+    char nombre[50];
+    float precio;
+    int stock;
+};
 
-int main(){
-    int totalProd = 0, op = 0;
-    producto inventario[100];
-    do{
-        printf("\n\t%c%c%c\tInventario de Tienda\t%c%c%c", 178,177,176,176,177,178);
-        printf("\n %c [1] Agregar Producto\n %c [2] Comprar Producto\n %c [3] Mostrar Catalogo\n %c [4] Salir", 175,175,175,175);
-        printf("\n Opcion: ");
-        scanf("%d", &op);
+// Variables globales para persistir entre llamadas
+struct Tienda *productos = NULL;
+int size = 0;
+int count = 0;  // cuántos productos hay actualmente
 
-        switch(op){
-            case 1: agregar_producto(inventario, &totalProd);
+int menu_principal(int *opcion){
+
+    printf("\n%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
+               201, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205,205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205,187);
+    printf("\n%c\tInventario Tienda\t%c\n",186,186);
+    printf("%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c",
+               200, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205,205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205, 205,188);
+    printf("\n %c [1] - Agregar Productos"
+            "\n %c [2] - Comprar Productos"
+            "\n %c [3] - Mostrar Catalogo"
+            "\n %c [4] - Salir"
+            "\n\n Selecciona: ", 175,175,175,175);
+    scanf("%d", &*opcion);
+
+    return (*opcion);
+}
+
+void ingreso_productos(void) {
+    // Si no hay espacio, pedir cuántos agregar
+    if (count == size) {
+        int plus;
+        printf("\n Cuantos nuevos productos desea agregar: ");
+        scanf("%d", &plus);
+
+        // Redimensionar el arreglo
+        size += plus;
+        productos = (struct Tienda *)realloc(productos, size * sizeof(struct Tienda));
+
+        if (productos == NULL) {
+            printf("Error: no se pudo asignar memoria\n");
+            return;
+        }
+    }
+
+    // Ingresar el producto en la posición actual
+    printf("\n Ingrese Nombre del producto: ");
+    scanf("%49s", productos[count].nombre);
+
+    printf("\n Ingrese precio: ");
+    scanf("%f", &productos[count].precio);
+
+    printf("\n Ingrese stock: ");
+    scanf("%d", &productos[count].stock);
+
+    printf("\n %c Producto a%cadido correctamente %c\n",175,164,174);
+    count++;
+}
+
+int main(int argc, const char * argv[]) {
+    int opcion;
+
+    do {
+        opcion = menu_principal(&opcion);
+
+        switch (opcion) {
+            case 1:
+                ingreso_productos();
                 break;
-            case 2: //comprar_producto();
+            case 2:
+                printf("\n (por implementar)\n");
                 break;
-            case 3: //mostrar_catalogo();
+            case 3:
+                printf("\n -- Catalogo --\n");
+                for (int i = 0; i < count; i++) {
+                    printf("\n [%d] Nombre: %s | Precio: %.2f | Stock: %d",
+                           i + 1,
+                           productos[i].nombre,
+                           productos[i].precio,
+                           productos[i].stock);
+                }
+                printf("\n");
                 break;
             case 4:
-                op = 4;
+                printf("\n\t Has salido del sistema... \n\n\t %c Hasta luego %c\n", 254,254);
                 break;
             default:
                 printf("\n %c Opcion elegida no valida... Intentelo de nuevo %c\n ", 158,158);
                 system("pause");
         }
+        system("pause");
         system("cls");
-    }while(op != 4);
+    } while (opcion != 4);
 
-    printf("\n\t Has salido del sistema... \n\n\t %c Hasta luego %c\n", 254,254);
-    return 0;
-}
-
-void agregar_producto(producto inventario[], int *totalProd){
-    printf(" \n Por favor ingrese el nombre del producto: ");
-    scanf("%s", inventario[*totalProd].nombre);
-    fflush(stdin);
-    printf(" \n Por favor ingrese el precio del producto: ");
-    scanf("%f", &inventario[*totalProd].precio);
-    printf(" \n Por favor ingrese el stock del producto: ");
-    scanf("%d", &inventario[*totalProd].stock);
-
-    (*totalProd)++;
-
-    printf(" \n\t %c Producto Guardado Exitosamente %c", 157, 157);
+    free(productos);  // liberar memoria al salir
+    return EXIT_SUCCESS;
 }
