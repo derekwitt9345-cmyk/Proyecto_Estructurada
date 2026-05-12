@@ -68,6 +68,70 @@ void ingreso_productos(void) {
     count++;
 }
 
+void mostrar_catalogo(){
+    // verificamos si es que hay productos registrados
+    if(count == 0){
+        printf("\n El inventario esta vacio.\n");
+        return;
+    }
+    // si si hay mostramos el catalogo
+    //aqui le pedi a la IA para que me ayudara a darle un formato de tabla sin que se deforme la tabla
+    printf("\n %-4s | %-20s | %-10s | %-5s", "ID", "Nombre", "Precio", "Stock");
+    printf("\n---------------------------------------------------------");
+    for (int i = 0; i < count; i++) {
+        printf("\n [%02d] | %-20.20s | $%9.2f | %5d",
+        i + 1,
+        productos[i].nombre,
+        productos[i].precio,
+        productos[i].stock);
+    }
+    printf("\n");
+}
+
+void comprar_producto(){
+    //declaramos variables para el opcion de ID de producto y la cantidad que desea comprar...
+    int cantidad = 0, op_id = 0, intentos = 3;
+
+    //verificamos si hay productos, si no hay no mostrara el catalogo
+    if(count == 0){
+        printf("\n %c No hay productos registrados para vender. %c\n",158,158);
+        return;
+    }
+
+    // mostramos el catalogo
+    mostrar_catalogo();
+
+    //le damos al usuario intentos de compra, si llega a 0 o si se realiza exitosamente la compra se detiene
+    do{
+        printf("\n\t Intentos de compra: %d\n", intentos);
+        printf(" Ingrese el ID del producto que desea comprar: ");
+        scanf("%d",&op_id);
+        if(op_id <= 0 || op_id > count){ //verificamos que este en "rango" con el ID mostrado
+            printf("\n %c ID ingresado fuera del rango... Intentelo de nuevo %c \n",158,158);
+            intentos--;
+            continue;
+        }
+
+        op_id--;
+
+        printf("\n Cuantas unidades deseas comprar? \n Unidades: ");
+        scanf("%d", &cantidad);
+        if(cantidad <= 0 || cantidad > productos[op_id].stock){
+            printf("\n %c Cantidad de productos fuera de rango... Intentelo de nuevo %c \n",158,158);
+            intentos--;
+            continue;
+        }
+
+        productos[op_id].stock = productos[op_id].stock - cantidad;
+        break;
+    }while(intentos != 0);
+
+    if(intentos == 0)
+        printf("\n Se te acabaron los intentos de compra... Intentelo de nuevo mas tarde \n");
+    else
+        printf(" \n\n\t %c Compra realizada exitosamente! %c \n",254,254);
+}
+
 int main(int argc, const char * argv[]) {
     int opcion;
 
@@ -79,21 +143,13 @@ int main(int argc, const char * argv[]) {
                 ingreso_productos();
                 break;
             case 2:
-                printf("\n (por implementar)\n");
+                comprar_producto();
                 break;
             case 3:
-                printf("\n -- Catalogo --\n");
-                for (int i = 0; i < count; i++) {
-                    printf("\n [%d] Nombre: %s | Precio: %.2f | Stock: %d",
-                           i + 1,
-                           productos[i].nombre,
-                           productos[i].precio,
-                           productos[i].stock);
-                }
-                printf("\n");
+                mostrar_catalogo();
                 break;
             case 4:
-                printf("\n\t Has salido del sistema... \n\n\t %c Hasta luego %c\n", 254,254);
+                printf("\n\t %c Has salido del sistema... %c\n", 254,254);
                 break;
             default:
                 printf("\n %c Opcion elegida no valida... Intentelo de nuevo %c\n ", 158,158);
